@@ -6,15 +6,15 @@ from geometry_msgs.msg import Twist
 from sensor_msgs.msg import LaserScan
 
 class WanderBot():
-    def __init__(self) -> None:       
+    def __init__(self):       
         self.wander_bot_node = rospy.init_node('wanderbot')
-        self.vel_pub = rospy.Publisher(self.cmd_vel_topic, Twist(), queue_size=10)
         self. cmd_vel_topic = '/cmd_vel'
-        self.scan_sub = rospy.Subscriber(self.scan_topic, LaserScan(), self.WanderBotCallback())
+        self.vel_pub = rospy.Publisher(self.cmd_vel_topic, Twist, queue_size=10)
         self.scan_topic = '/scan'
+        self.scan_sub = rospy.Subscriber(self.scan_topic, LaserScan, self.WanderBotCallback)
         self.obstacle_threshold = 1.0 # in meters
 
-    def DetectObst(self, lidar_data: list):
+    def DetectObst(self, lidar_data):
         """Check Lidar scan data for values less then the threshold. 
         If data has value below threshold then an obstacle has been detected.
 
@@ -29,21 +29,22 @@ class WanderBot():
                 return True
         return False
 
-    def WanderBotPubSub(self):
-        self.vel_pub
-        self.scan_sub
-
     def WanderBotCallback(self, scan_msg):
         velocity = Twist()
         lidar_data = scan_msg.ranges
 
-        if self.DetectObst(lidar_data):
-            rospy.loginfo('Obstacle detected, turning')
-            velocity.linear.x = 0.0
-            velocity.angular.z = -0.5
-        else:
+        if not self.DetectObst(lidar_data):
             rospy.loginfo('No obstacle detected, driving forward')
             velocity.linear.x = 0.5
             velocity.angular.z = 0.0
+        else:
+            rospy.loginfo('Obstacle detected, turning')
+            velocity.linear.x = 0.0
+            velocity.angular.z = -0.5
 
-        self.vel_pub(velocity)
+        self.vel_pub.publish(velocity)
+
+if __name__ == '__main__':
+    Bot = WanderBot()
+    # Bot.WanderBotPubSub()
+    rospy.spin()
