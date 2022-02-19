@@ -9,9 +9,9 @@ class WanderBot():
     def __init__(self):       
         self.wander_bot_node = rospy.init_node('wanderbot')
         self. cmd_vel_topic = '/cmd_vel'
-        self.vel_pub = rospy.Publisher(self.cmd_vel_topic, Twist, queue_size=10)
+        self.vel_pub = rospy.Publisher(self.cmd_vel_topic, Twist, queue_size=100)
         self.scan_topic = '/scan'
-        self.scan_sub = rospy.Subscriber(self.scan_topic, LaserScan, self.WanderBotCallback)
+        self.scan_sub = rospy.Subscriber(self.scan_topic, LaserScan, self.WanderBotCallback, queue_size=100)
         self.obstacle_threshold = 1.0 # in meters
 
     def DetectObst(self, lidar_data):
@@ -24,12 +24,21 @@ class WanderBot():
         Returns:
             (bool): True if an obstacle has been detected, False if not
         """
-        for data in lidar_data:
-            if data <= self.obstacle_threshold:
+
+        i = 20
+        for i in range(160):
+            # data in lidar_data:
+            if lidar_data[i] <= self.obstacle_threshold:
                 return True
         return False
 
     def WanderBotCallback(self, scan_msg):
+        """Callback function to publish velocities depending on if an obstacle is or is not detected.
+
+        Args:
+            (scan_msg): Lidar scan data
+        """        
+
         velocity = Twist()
         lidar_data = scan_msg.ranges
 
