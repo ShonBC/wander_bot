@@ -25,7 +25,7 @@
     args="-urdf -model waffle_pi -x $(arg x_pos) -y $(arg y_pos) -z $(arg z_pos) -param robot_description" />
 
     <!-- Run Walker_Node -->
-    <node pkg="wander_bot" type="wander_bot" name="wander_bot.py">
+    <node pkg="wander_bot" type="main" name="main">
         
     </node>
 
