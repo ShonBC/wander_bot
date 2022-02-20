@@ -2,8 +2,8 @@
 <launch>
     <!-- Initialize arguments -->
     <arg name="model" default="$(env TURTLEBOT3_MODEL)" doc="model type [burger, waffle, waffle_pi]"/>
-    <arg name="x_pos" default="-2.0"/>
-    <arg name="y_pos" default="1.0"/>
+    <arg name="x_pos" default="-6.5"/>
+    <arg name="y_pos" default="2.0"/>
     <arg name="z_pos" default="0.0"/>
     <arg name="record_bag" default="false"/>
     <arg name="bag_file" default="walker_bag.bag"/>
@@ -23,7 +23,7 @@
     <param name="robot_description" command="$(find xacro)/xacro --inorder $(find turtlebot3_description)/urdf/turtlebot3_$(arg model).urdf.xacro" />
     
     <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf" 
-    args="-urdf -model waffle_pi -x $(arg x_pos) -y $(arg y_pos) -z $(arg z_pos) -param robot_description" />
+    args="-urdf -model burger -x $(arg x_pos) -y $(arg y_pos) -z $(arg z_pos) -param robot_description" />
 
     <!-- Run Walker_Node -->
     <node pkg="wander_bot" type="wander_bot" name="wander_bot_node" output="screen">
